@@ -1,133 +1,78 @@
 <template>
+    <Main>
     <div class="min-h-screen bg-gray-100">
         <div class="max-w-7xl mx-auto p-4">
             <div class="flex space-x-4 overflow-x-auto pb-4">
-                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3">
-                    <h2 class="font-semibold text-lg mb-3 text-gray-700">To Do</h2>
-                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent
-                        @drop="onDrop($event, 'todo')">
-                        <div v-for="(card, index) in todoCards" :key="card.id" :data-card-id="card.id" draggable="true"
-                            @dragstart="onDragStart($event, card, 'todo', index)" @dragend="onDragEnd" @dragover.prevent
-                            @drop.stop="onCardDrop($event, 'todo', index)"
-                            :style="{ borderLeft: `4px solid ${card.color || '#333'}` }"
-                            class="bg-white p-3 rounded shadow cursor-move">
-                            <div class="flex justify-between items-start">
-                                <div class="cursor-pointer flex-grow" @click.stop="showCardModal(card)">
-                                    <h3 class="font-medium">{{ card.title }}</h3>
-                                    <p class="text-sm text-gray-600 mt-1">{{ card.description }}</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button @click.stop="editCard('todo', card)"
-                                        class="text-gray-500 hover:text-blue-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button @click.stop="deleteCard('todo', card.id)"
-                                        class="text-gray-500 hover:text-red-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
+                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3 border border-gray-300">
+                    <h2 class="font-bold text-lg mb-3 text-gray-700">To Do</h2>
+                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent @drop="onDrop($event, 'todo')">
+                        <div v-for="(card, index) in todoCards" :key="card.id">
+                            <TaskCard
+                                :card="card"
+                                listType="todo"
+                                :index="index"
+                                :onDragStart="onDragStart"
+                                :onDragEnd="onDragEnd"
+                                :onCardDrop="onCardDrop"
+                                :showCardModal="showCardModal"
+                                :editCard="editCard"
+                                :deleteCard="deleteCard"
+                            />
                         </div>
                     </div>
-                    <button @click="openSidebar('todo')"
-                        class="mt-3 w-full text-left p-2 text-gray-600 bg-gray-100 hover:bg-gray-300 rounded transition">
-                        Add a card
+                    <button @click="openSidebar('todo')" class="mt-3 text-left px-2 py-1 text-gray-600 flex items-center hover:bg-gray-300 rounded transition cursor-pointer gap-x-1">
+                        <PlusIcon class="size-5" /> <strong class="text-sm">Add a card</strong>
                     </button>
                 </div>
 
-                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3">
-                    <h2 class="font-semibold text-lg mb-3 text-gray-700">In Progress</h2>
-                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent
-                        @drop="onDrop($event, 'inProgress')">
-                        <div v-for="(card, index) in inProgressCards" :key="card.id" :data-card-id="card.id"
-                            draggable="true" @dragstart="onDragStart($event, card, 'inProgress', index)"
-                            @dragend="onDragEnd" @dragover.prevent @drop.stop="onCardDrop($event, 'inProgress', index)"
-                            :style="{ borderLeft: `4px solid ${card.color || '#333'}` }"
-                            class="bg-white p-3 rounded shadow cursor-move">
-                            <div class="flex justify-between items-start">
-                                <div class="cursor-pointer flex-grow" @click.stop="showCardModal(card)">
-                                    <h3 class="font-medium">{{ card.title }}</h3>
-                                    <p class="text-sm text-gray-600 mt-1">{{ card.description }}</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button @click.stop="editCard('inProgress', card)"
-                                        class="text-gray-500 hover:text-blue-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button @click.stop="deleteCard('inProgress', card.id)"
-                                        class="text-gray-500 hover:text-red-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
+                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3 border border-gray-300">
+                    <h2 class="font-bold text-lg mb-3 text-gray-700">In Progress</h2>
+                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent @drop="onDrop($event, 'inProgress')">
+                        <div v-for="(card, index) in inProgressCards" :key="card.id">
+                            <TaskCard
+                                :card="card"
+                                listType="inProgress"
+                                :index="index"
+                                :onDragStart="onDragStart"
+                                :onDragEnd="onDragEnd"
+                                :onCardDrop="onCardDrop"
+                                :showCardModal="showCardModal"
+                                :editCard="editCard"
+                                :deleteCard="deleteCard"
+                            />
                         </div>
                     </div>
-                    <button @click="openSidebar('inProgress')"
-                        class="mt-3 w-full text-left p-2 text-gray-600 bg-gray-100 hover:bg-gray-300 rounded transition">
-                        Add a card
+                    <button @click="openSidebar('inProgress')" class="mt-3 text-left px-2 py-1 text-gray-600 flex items-center hover:bg-gray-300 rounded transition cursor-pointer gap-x-1">
+                        <PlusIcon class="size-5" /> <strong class="text-sm">Add a card</strong>
                     </button>
                 </div>
 
-                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3">
-                    <h2 class="font-semibold text-lg mb-3 text-gray-700">Done</h2>
-                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent
-                        @drop="onDrop($event, 'done')">
-                        <div v-for="(card, index) in doneCards" :key="card.id" :data-card-id="card.id" draggable="true"
-                            @dragstart="onDragStart($event, card, 'done', index)" @dragend="onDragEnd" @dragover.prevent
-                            @drop.stop="onCardDrop($event, 'done', index)"
-                            :style="{ borderLeft: `4px solid ${card.color || '#333'}` }"
-                            class="bg-white p-3 rounded shadow cursor-move">
-                            <div class="flex justify-between items-start">
-                                <div class="cursor-pointer flex-grow" @click.stop="showCardModal(card)">
-                                    <h3 class="font-medium">{{ card.title }}</h3>
-                                    <p class="text-sm text-gray-600 mt-1">{{ card.description }}</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button @click.stop="editCard('done', card)"
-                                        class="text-gray-500 hover:text-blue-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button @click.stop="deleteCard('done', card.id)"
-                                        class="text-gray-500 hover:text-red-500 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
+                <div class="flex-shrink-0 lg:flex-shrink-1 w-full md:w-1/3 bg-gray-200 rounded-lg p-3 border border-gray-300">
+                    <h2 class="font-bold text-lg mb-3 text-gray-700">Done</h2>
+                    <div class="min-h-[200px] space-y-2 column-drop-zone" @dragover.prevent @drop="onDrop($event, 'done')">
+                        <div v-for="(card, index) in doneCards" :key="card.id">
+                            <TaskCard
+                                :card="card"
+                                listType="done"
+                                :index="index"
+                                :onDragStart="onDragStart"
+                                :onDragEnd="onDragEnd"
+                                :onCardDrop="onCardDrop"
+                                :showCardModal="showCardModal"
+                                :editCard="editCard"
+                                :deleteCard="deleteCard"
+                            />
                         </div>
                     </div>
                     <button @click="openSidebar('done')"
-                        class="mt-3 w-full text-left p-2 text-gray-600 bg-gray-100 hover:bg-gray-300 rounded transition">
-                        Add a card
+                        class="mt-3 text-left px-2 py-1 text-gray-600 flex items-center hover:bg-gray-300 rounded transition cursor-pointer gap-x-1">
+                        <PlusIcon class="size-5" /> <strong class="text-sm">Add a card</strong>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div v-if="isSidebarOpen" class="bg-[#00000060] bg-opacity-50 absolute inset-0" @click="closeSidebar"></div>
+        <div v-if="isSidebarOpen" class="bg-[#00000060] bg-opacity-50 absolute inset-0"></div>
         <Transition name="slide">
             <div v-if="isSidebarOpen" class="fixed inset-0 z-10 flex justify-end">
                 <div class="bg-white w-full max-w-md p-6 h-full overflow-y-auto relative">
@@ -206,10 +151,14 @@
             </div>
         </Transition>
     </div>
+    </Main>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue';
+import Main from '../layouts/Main.vue';
+import TaskCard from "../components/TaskCard.vue";
+import { PlusIcon } from '@heroicons/vue/24/solid'
 
 const todoCards = ref([
     { id: 1, title: 'Research competitors', description: 'Analyze the top 5 competitors in the market', color: '#F87171' }
