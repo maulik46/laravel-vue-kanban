@@ -37,7 +37,7 @@ The application follows a clean, layered architecture:
 
 - PHP 8.2+
 - Composer
-- Node.js & NPM
+- Node.js 20.0+ & NPM
 - SqlLite
 
 ### Setup
