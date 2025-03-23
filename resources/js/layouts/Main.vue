@@ -1,6 +1,5 @@
-<!-- src/layouts/Main.vue -->
 <template>
-    <div class="main-layout">
+    <div class="main-layout min-h-screen bg-gray-100">
         <Navbar />
         <main>
             <slot></slot>
