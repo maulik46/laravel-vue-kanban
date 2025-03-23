@@ -22,7 +22,7 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'task_type_id' => 'required|exists:task_types,id',
             'color_code' => 'nullable|string|max:7',
         ]);

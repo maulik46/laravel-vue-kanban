@@ -1,12 +1,8 @@
-// import { createApp } from 'vue';
-// import App from './App.vue';
-
-// createApp(App).mount('#app');
-
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 
 createInertiaApp({
+  title: () => 'Kanban Board',
   resolve: name => {
     const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
     return pages[`./Pages/${name}.vue`]
