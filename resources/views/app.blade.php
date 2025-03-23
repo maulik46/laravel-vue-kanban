@@ -5,11 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Laravel</title>
         @vite(['resources/css/app.css'])
+        @inertiaHead
     </head>
     <body>
-        <div id="app">
-            <example-component />
-        </div>
-       @vite(['resources/js/app.js'])
+        @inertia
+        @vite(['resources/js/app.js'])
     </body>
 </html>
