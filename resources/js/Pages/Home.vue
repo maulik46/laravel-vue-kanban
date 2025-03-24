@@ -37,10 +37,10 @@
 import { ref, reactive, onMounted, watch, computed } from 'vue';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { router } from '@inertiajs/vue3';
-import Main from '@/Layouts/Main.vue';
-import TaskCard from "@/Components/TaskCard.vue";
-import FormSidebar from "@/Components/FormSidebar.vue";
-import Modal from '@/Components/Modal.vue';
+import Main from '../layouts/Main.vue';
+import TaskCard from "../components/TaskCard.vue";
+import FormSidebar from "../components/FormSidebar.vue";
+import Modal from '../components/Modal.vue';
 
 // Simple type definitions
 type TaskType = {
@@ -130,7 +130,7 @@ const openSidebar = (column: string) => {
     isSidebarOpen.value = true;
     isEditMode.value = false;
     newCard.id = null;
-    newCard.type_id = '';
+    newCard.type_id = getTaskTypeId(column);
     newCard.title = '';
     newCard.description = '';
     newCard.color_code = colorOptions[0].value;
