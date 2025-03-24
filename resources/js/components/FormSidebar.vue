@@ -12,10 +12,10 @@
                 <form @submit.prevent="submitForm">
                     <div class="mb-4">
                         <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                        <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2" :class="errors.title ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'"  v-model="formData.type_id">
+                        <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2" :class="errors.type_id ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'"  v-model="formData.type_id">
                             <option v-for="taskType in taskTypes" :key="taskType.id" :value="taskType.id">{{ taskType.name }}</option>
                         </select>
-                        <p v-if="errors.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</p>
+                        <p v-if="errors.type_id" class="mt-1 text-sm text-red-600">{{ errors.type_id }}</p>
                     </div>
 
                     <div class="mb-4">
@@ -144,7 +144,7 @@ watch(() => props.cardData, (newCardData) => {
 watch(() => props.isOpen, (isOpen) => {
     if (isOpen && !props.isEditMode) {
         formData.id = null;
-        formData.type_id = props.taskTypes.length > 0 ? props.taskTypes[0].id : '';
+        formData.type_id = props.cardData.type_id ? props.cardData.type_id : (props.taskTypes.length > 0 ? props.taskTypes[0].id : '');
         formData.title = '';
         formData.description = '';
         formData.color_code = props.colorOptions.length > 0 ? props.colorOptions[0].value : '#F87171';
